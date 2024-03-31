@@ -1,0 +1,47 @@
+./xgcc gcc.c -I./config 
+./xgcc version.c -I./config 
+./xgcc obstack.c -I./config 
+./xgcc alloca.c -I./config 
+./xgcc toplev.c -I./config 
+./xgcc c-parse.tab.c -I./config -O0
+./xgcc tree.c -I./config 
+./xgcc print-tree.c -I./config 
+./xgcc c-decl.c -I./config 
+./xgcc c-typeck.c -I./config 
+./xgcc c-convert.c -I./config 
+./xgcc stor-layout.c -I./config 
+./xgcc fold-const.c -I./config 
+./xgcc rtl.c -I./config 
+./xgcc expr.c -I./config 
+./xgcc stmt.c -I./config 
+./xgcc expmed.c -I./config 
+./xgcc explow.c -I./config 
+./xgcc optabs.c -I./config 
+./xgcc varasm.c -I./config 
+./xgcc symout.c -I./config 
+./xgcc dbxout.c -I./config 
+./xgcc sdbout.c -I./config 
+./xgcc emit-rtl.c -I./config 
+./xgcc insn-emit.c -I./config 
+./xgcc integrate.c -I./config 
+./xgcc jump.c -I./config 
+./xgcc cse.c -I./config 
+./xgcc loop.c -I./config 
+./xgcc flow.c -I./config 
+./xgcc stupid.c -I./config 
+./xgcc combine.c -I./config 
+./xgcc regclass.c -I./config 
+./xgcc local-alloc.c -I./config 
+./xgcc global-alloc.c -I./config 
+./xgcc reload.c -I./config 
+./xgcc reload1.c -I./config 
+./xgcc caller-save.c -I./config 
+./xgcc insn-peep.c -I./config 
+./xgcc final.c -I./config 
+./xgcc recog.c -I./config 
+./xgcc insn-recog.c -I./config 
+./xgcc insn-extract.c -I./config 
+./xgcc insn-output.c -I./config 
+
+./xgcc cccp.c -I./config -DGCC_INCLUDE_DIR=\"/usr/local/lib/gcc-include\"
+./xgcc cexp.c -I./config

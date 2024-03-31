@@ -1,0 +1,1 @@
+~/projects/tek4404/development/UniflexEmu/rcat -v -o cc1.2.r integrate.o.r jump.o.r local-alloc.o.r loop.o.r optabs.o.r print-tree.o.r recog.o.r regclass.o.r reload.o.r reload1.o.r caller-save.o.r rtl.o.r rtlanal.o.r sdbout.o.r stmt.o.r stor-layout.o.r stupid.o.r symout.o.r toplev.o.r tree.o.r varasm.o.r version.o.r obstack.o.r alloca.o.r 

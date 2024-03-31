@@ -1,0 +1,646 @@
+ name singlegnulib.c
+ text
+ global ___eprintf
+___eprintf
+ link a6,#-(L2+R2)
+*movem.l #M2,-(L2+R2-4)(a6)
+ move.l 20(a6),(sp)
+ move.l 16(a6),-(sp)
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ move.l #__iob+56,-(sp)
+ jsr   _fprintf
+ lea 16(sp),sp
+ move.l #__iob+56,(sp)
+ jsr   _fflush
+ jsr   _abort
+L1
+L2 equ 4
+ unlk a6
+ rts
+R2 equ 0
+M2 equ $0000
+ global ___umulsi3
+___umulsi3
+ link a6,#-(L4+R4)
+*movem.l #M4,-(L4+R4-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr ulmul
+ add.l #4,sp
+L3
+L4 equ 4
+ unlk a6
+ rts
+R4 equ 0
+M4 equ $0000
+ global ___mulsi3
+___mulsi3
+ link a6,#-(L6+R6)
+*movem.l #M6,-(L6+R6-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr lmul
+ add.l #4,sp
+L5
+L6 equ 4
+ unlk a6
+ rts
+R6 equ 0
+M6 equ $0000
+ global ___udivsi3
+___udivsi3
+ link a6,#-(L8+R8)
+*movem.l #M8,-(L8+R8-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr uldiv
+ add.l #4,sp
+L7
+L8 equ 4
+ unlk a6
+ rts
+R8 equ 0
+M8 equ $0000
+ global ___divsi3
+___divsi3
+ link a6,#-(L10+R10)
+*movem.l #M10,-(L10+R10-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr ldiv
+ add.l #4,sp
+L9
+L10 equ 4
+ unlk a6
+ rts
+R10 equ 0
+M10 equ $0000
+ global ___umodsi3
+___umodsi3
+ link a6,#-(L12+R12)
+*movem.l #M12,-(L12+R12-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr ulmod
+ add.l #4,sp
+L11
+L12 equ 4
+ unlk a6
+ rts
+R12 equ 0
+M12 equ $0000
+ global ___modsi3
+___modsi3
+ link a6,#-(L14+R14)
+*movem.l #M14,-(L14+R14-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr lmod
+ add.l #4,sp
+L13
+L14 equ 4
+ unlk a6
+ rts
+R14 equ 0
+M14 equ $0000
+ global ___lshrsi3
+___lshrsi3
+ link a6,#-(L16+R16)
+*movem.l #M16,-(L16+R16-4)(a6)
+ move.l 12(a6),d2
+ move.l 8(a6),d1
+ lsr.l d2,d1
+ move.l d1,d0
+L15
+L16 equ 4
+ unlk a6
+ rts
+R16 equ 0
+M16 equ $0000
+ global ___lshlsi3
+___lshlsi3
+ link a6,#-(L18+R18)
+*movem.l #M18,-(L18+R18-4)(a6)
+ move.l 12(a6),d2
+ move.l 8(a6),d1
+ lsl.l d2,d1
+ move.l d1,d0
+L17
+L18 equ 4
+ unlk a6
+ rts
+R18 equ 0
+M18 equ $0000
+ global ___ashrsi3
+___ashrsi3
+ link a6,#-(L20+R20)
+*movem.l #M20,-(L20+R20-4)(a6)
+ move.l 12(a6),d2
+ move.l 8(a6),d1
+ asr.l d2,d1
+ move.l d1,d0
+L19
+L20 equ 4
+ unlk a6
+ rts
+R20 equ 0
+M20 equ $0000
+ global ___ashlsi3
+___ashlsi3
+ link a6,#-(L22+R22)
+*movem.l #M22,-(L22+R22-4)(a6)
+ move.l 12(a6),d2
+ move.l 8(a6),d1
+ asl.l d2,d1
+ move.l d1,d0
+L21
+L22 equ 4
+ unlk a6
+ rts
+R22 equ 0
+M22 equ $0000
+ global ___divdf3
+___divdf3
+ bss
+L10001 rab 8
+ text
+ link a6,#-(L24+R24)
+*movem.l #M24,-(L24+R24-4)(a6)
+ move.l 20(a6),(sp)
+ move.l 16(a6),-(sp)
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dbldiv
+ move.l #L10001,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L23
+L24 equ 4
+ unlk a6
+ rts
+R24 equ 0
+M24 equ $0000
+ global ___muldf3
+___muldf3
+ bss
+L10002 rab 8
+ text
+ link a6,#-(L26+R26)
+*movem.l #M26,-(L26+R26-4)(a6)
+ move.l 20(a6),(sp)
+ move.l 16(a6),-(sp)
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dblmul
+ move.l #L10002,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L25
+L26 equ 4
+ unlk a6
+ rts
+R26 equ 0
+M26 equ $0000
+ global ___negdf2
+___negdf2
+ bss
+L10003 rab 8
+ text
+ link a6,#-(L28+R28)
+*movem.l #M28,-(L28+R28-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr dblneg
+ move.l #L10003,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L27
+L28 equ 4
+ unlk a6
+ rts
+R28 equ 0
+M28 equ $0000
+ global ___adddf3
+___adddf3
+ bss
+L10004 rab 8
+ text
+ link a6,#-(L30+R30)
+*movem.l #M30,-(L30+R30-4)(a6)
+ move.l 20(a6),(sp)
+ move.l 16(a6),-(sp)
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dbladd
+ move.l #L10004,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L29
+L30 equ 4
+ unlk a6
+ rts
+R30 equ 0
+M30 equ $0000
+ global ___subdf3
+___subdf3
+ bss
+L10005 rab 8
+ text
+ link a6,#-(L32+R32)
+*movem.l #M32,-(L32+R32-4)(a6)
+ move.l 20(a6),(sp)
+ move.l 16(a6),-(sp)
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dblsub
+ move.l #L10005,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L31
+L32 equ 4
+ unlk a6
+ rts
+R32 equ 0
+M32 equ $0000
+ global ___cmpdf2
+___cmpdf2
+ link a6,#-(L34+R34)
+*movem.l #M34,-(L34+R34-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ bls   L35
+ move.l #$1,d0
+ bra   L33
+L35
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ bhs   L37
+ move.l #$FFFFFFFF,d0
+ bra   L33
+L37
+L36
+ move.l #$0,d0
+L33
+L34 equ 4
+ unlk a6
+ rts
+R34 equ 0
+M34 equ $0000
+ global ___fixunsdfsi
+___fixunsdfsi
+ link a6,#-(L39+R39)
+*movem.l #M39,-(L39+R39-4)(a6)
+ move.l #$40000000,-(sp)
+ jsr intdbl
+ clr.l -(sp)
+ move.l #$40000000,-(sp)
+ jsr dblmul
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dblrcmp
+ lea 12(sp),sp
+ bhs   L40
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr dblint
+ add.l #4,sp
+ bra   L38
+L40
+ move.l #$40000000,-(sp)
+ jsr intdbl
+ clr.l -(sp)
+ move.l #$40000000,-(sp)
+ jsr dblmul
+ move.l 12(a6),-(sp)
+ move.l 8(a6),-(sp)
+ jsr dblsub
+ jsr dblint
+ add.l #4,sp
+ sub.l #$80000000,d0
+ bra   L38
+L41
+L38
+L39 equ 4
+ unlk a6
+ rts
+R39 equ 0
+M39 equ $0000
+ global ___fixdfsi
+___fixdfsi
+ link a6,#-(L43+R43)
+*movem.l #M43,-(L43+R43-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr dblint
+ add.l #4,sp
+L42
+L43 equ 4
+ unlk a6
+ rts
+R43 equ 0
+M43 equ $0000
+ global ___floatsidf
+___floatsidf
+ bss
+L10006 rab 8
+ text
+ link a6,#-(L45+R45)
+*movem.l #M45,-(L45+R45-4)(a6)
+ move.l 8(a6),-(sp)
+ jsr intdbl
+ move.l #L10006,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L44
+L45 equ 4
+ unlk a6
+ rts
+R45 equ 0
+M45 equ $0000
+ global ___floatunsidf
+___floatunsidf
+ bss
+L10007 rab 8
+ text
+ link a6,#-(L47+R47)
+*movem.l #M47,-(L47+R47-4)(a6)
+ move.l 8(a6),-(sp)
+ jsr unsdbl
+ move.l #L10007,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L46
+L47 equ 4
+ unlk a6
+ rts
+R47 equ 0
+M47 equ $0000
+ global ___eqdf2
+___eqdf2
+ link a6,#-(L49+R49)
+*movem.l #M49,-(L49+R49-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ bne   1f
+ move.l #0,d0
+ bra.s 2f
+1 move.l #1,d0
+2
+L48
+L49 equ 4
+ unlk a6
+ rts
+R49 equ 0
+M49 equ $0000
+ global ___ltdf2
+___ltdf2
+ link a6,#-(L51+R51)
+*movem.l #M51,-(L51+R51-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ blo   1f
+ move.l #0,d0
+ bra.s 2f
+1 move.l #1,d0
+2
+L50
+L51 equ 4
+ unlk a6
+ rts
+R51 equ 0
+M51 equ $0000
+ global ___gtdf2
+___gtdf2
+ link a6,#-(L53+R53)
+*movem.l #M53,-(L53+R53-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ bhi   1f
+ move.l #0,d0
+ bra.s 2f
+1 move.l #1,d0
+2
+L52
+L53 equ 4
+ unlk a6
+ rts
+R53 equ 0
+M53 equ $0000
+ global ___nedf2
+___nedf2
+ link a6,#-(L55+R55)
+*movem.l #M55,-(L55+R55-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ move.l 20(a6),-(sp)
+ move.l 16(a6),-(sp)
+ jsr dblcmp
+ lea 12(sp),sp
+ beq   1f
+ move.l #0,d0
+ bra.s 2f
+1 move.l #1,d0
+2
+L54
+L55 equ 4
+ unlk a6
+ rts
+R55 equ 0
+M55 equ $0000
+ global ___addsf3
+___addsf3
+ link a6,#-(L57+R57)
+*movem.l #M57,-(L57+R57-4)(a6)
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dbladd
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L56
+L57 equ 8
+ unlk a6
+ rts
+R57 equ 0
+M57 equ $0000
+ global ___negsf2
+___negsf2
+ link a6,#-(L59+R59)
+*movem.l #M59,-(L59+R59-4)(a6)
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dblneg
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L58
+L59 equ 8
+ unlk a6
+ rts
+R59 equ 0
+M59 equ $0000
+ global ___subsf3
+___subsf3
+ link a6,#-(L61+R61)
+*movem.l #M61,-(L61+R61-4)(a6)
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dblsub
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L60
+L61 equ 8
+ unlk a6
+ rts
+R61 equ 0
+M61 equ $0000
+ global ___cmpsf2
+___cmpsf2
+ link a6,#-(L63+R63)
+*movem.l #M63,-(L63+R63-4)(a6)
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dblrcmp
+ lea 12(sp),sp
+ bls   L64
+ move.l #$1,d0
+ bra   L62
+L64
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dblrcmp
+ lea 12(sp),sp
+ bhs   L66
+ move.l #$FFFFFFFF,d0
+ bra   L62
+L66
+L65
+ move.l #$0,d0
+L62
+L63 equ 4
+ unlk a6
+ rts
+R63 equ 0
+M63 equ $0000
+ global ___mulsf3
+___mulsf3
+ link a6,#-(L68+R68)
+*movem.l #M68,-(L68+R68-4)(a6)
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dblmul
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L67
+L68 equ 8
+ unlk a6
+ rts
+R68 equ 0
+M68 equ $0000
+ global ___divsf3
+___divsf3
+ link a6,#-(L70+R70)
+*movem.l #M70,-(L70+R70-4)(a6)
+ move.l 12(a6),-(sp)
+ jsr fltdbl
+ sub.l #4,sp
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ jsr dbldiv
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L69
+L70 equ 8
+ unlk a6
+ rts
+R70 equ 0
+M70 equ $0000
+ global ___truncdfsf2
+___truncdfsf2
+ link a6,#-(L72+R72)
+*movem.l #M72,-(L72+R72-4)(a6)
+ move.l 12(a6),(sp)
+ move.l 8(a6),-(sp)
+ jsr dblflt
+ add.l #4,sp
+ move.l d0,-4(a6)
+L71
+L72 equ 8
+ unlk a6
+ rts
+R72 equ 0
+M72 equ $0000
+ global ___extendsfdf2
+___extendsfdf2
+ bss
+L10008 rab 8
+ text
+ link a6,#-(L74+R74)
+*movem.l #M74,-(L74+R74-4)(a6)
+ move.l 8(a6),-(sp)
+ jsr fltdbl
+ move.l #L10008,a0
+ move.l (sp)+,(a0)+
+ move.l (sp),(a0)
+ sub.l #4,a0
+L73
+L74 equ 4
+ unlk a6
+ rts
+R74 equ 0
+M74 equ $0000
+ bss
+ global ___avoid_ranlib_warning
+___avoid_ranlib_warning rab 4
+ data
+ dc.l _pffinit
+ text
+ data
+ text
+ end

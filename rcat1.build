@@ -1,0 +1,1 @@
+~/projects/tek4404/development/UniflexEmu/rcat -v -o cc1.1.r c-convert.o.r c-decl.o.r c-parse.tab.o.r c-typeck.o.r combine.o.r cse.o.r dbxout.o.r emit-rtl.o.r explow.o.r expmed.o.r expr.o.r final.o.r flow.o.r fold-const.o.r global-alloc.o.r insn-emit.o.r insn-extract.o.r insn-output.o.r insn-peep.o.r insn-recog.o.r 
