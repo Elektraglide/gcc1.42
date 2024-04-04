@@ -106,6 +106,30 @@
 #define ASM_OUTPUT_INTERNAL_LABEL(FILE,PREFIX,NUM)	\
   fprintf (FILE, "%s%d\015", PREFIX, NUM)
 
+#undef ASM_OUTPUT_DOUBLE
+#define ASM_OUTPUT_DOUBLE(FILE,VALUE)  \
+  fprintf (FILE, "\tds.l $%8.8x,$0\015", (VALUE))
+
+/* This is how to output an assembler line defining a `float' constant.  */
+#undef ASM_OUTPUT_FLOAT
+#define ASM_OUTPUT_FLOAT(FILE,VALUE)  \
+  fprintf (FILE, "\tds.l $%8.8x\015", (VALUE))
+
+/* Output a float value (represented as a C double) as an immediate operand.
+   This macro is a 68k-specific macro.  */
+#undef ASM_OUTPUT_FLOAT_OPERAND
+#define ASM_OUTPUT_FLOAT_OPERAND(FILE,VALUE)				\
+  fprintf (FILE, "#0r%g", (VALUE))
+
+/* Output a double value (represented as a C double) as an immediate operand.
+   This macro is a 68k-specific macro.  */
+#undef ASM_OUTPUT_DOUBLE_OPERAND
+#define ASM_OUTPUT_DOUBLE_OPERAND(FILE,VALUE)				\
+  fprintf (FILE, "#0r%g", (VALUE))
+
+
+
+/* This is how to output an assembler line defining an `int' constant.  */
 
 #undef ASM_OUTPUT_INT
 #define ASM_OUTPUT_INT(FILE,VALUE)  \
@@ -129,6 +153,11 @@
 #define ASM_OUTPUT_BYTE(FILE,VALUE)  \
   fprintf (FILE, "\tfcb 0x%x\015", (VALUE))
 
+#undef ASM_FORMAT_PRIVATE_NAME
+#define ASM_FORMAT_PRIVATE_NAME(OUTPUT, NAME, LABELNO)	\
+( (OUTPUT) = (char *) alloca (strlen ((NAME)) + 10),	\
+  sprintf ((OUTPUT), "%s_%d", (NAME), (LABELNO)))
+
 
 #undef ASM_OUTPUT_SKIP
 #define ASM_OUTPUT_SKIP(FILE,SIZE)  \
@@ -148,6 +177,9 @@
   assemble_name ((FILE), (NAME)),		\
   fprintf ((FILE), "\trab %d\015", (ROUNDED)))
 
+#undef ASM_OUTPUT_ADDR_DIFF_ELT
+#define ASM_OUTPUT_ADDR_DIFF_ELT(FILE, VALUE, REL)  \
+  fprintf (FILE, "\tfdb L%d-L%d\015", VALUE, REL)
 
 #undef ASM_OUTPUT_ALIGN
 #define ASM_OUTPUT_ALIGN(FILE,LOG)	\
@@ -197,7 +229,6 @@
 { register int regno;						\
   register int mask = 0;					\
   extern char call_used_regs[];					\
-  static int maskid = 0;	\
   int fsize = ((SIZE) + 3) & -4;				\
   if (frame_pointer_needed)					\
     { if (fsize < 0x8000)			\
@@ -221,7 +252,7 @@
     mask &= ~ (1 << (15-FRAME_POINTER_REGNUM));			\
   if (exact_log2 (mask) >= 0)					\
     fprintf (FILE, "\tmove.l %s,-(sp)\015", reg_names[15 - exact_log2 (mask)]);  \
-  else if (mask) {fprintf (FILE, "M%d equ $%x\015\tmovem.l #M%d,-(sp)\015", maskid, mask, maskid); maskid++;}}
+  else if (mask) fprintf (FILE, "\tmovem.l #$%x,-(sp)\015",mask);}
 
 #undef FUNCTION_EPILOGUE
 #define FUNCTION_EPILOGUE(FILE, SIZE) \
@@ -230,7 +261,6 @@
   register int nregs;						\
   int offset, foffset, fpoffset;				\
   extern char call_used_regs[];					\
-  static int maskid = 0;	\
   extern int current_function_pops_args;			\
   extern int current_function_args_size;			\
   int fsize = ((SIZE) + 3) & -4;				\
@@ -271,11 +301,10 @@
       fprintf (FILE, "\tmovem.l a6@(-%d,a0:l),#0x%x\015",		\
 	       offset + fsize, mask);				\
     else if (! frame_pointer_needed)				\
-      fprintf (FILE, "M%d equ $%x\015\tmovem.l (sp)+,#M%d\015", maskid, mask, maskid);		\
+      fprintf (FILE, "\tmovem.l (sp)+,#$%x\015", mask);		\
     else							\
-      fprintf (FILE, "M%d equ $%x\015\tmovem.l -%d(a6),#M%d\015", maskid,mask,		\
-	       offset + fsize, maskid); }				\
-	maskid++; \
+      fprintf (FILE, "\tmovem.l -%d(a6),#$%x\015",		\
+	       offset + fsize, mask); }				\
   if (fmask) {							\
     if (big)							\
       fprintf (FILE, "\tfmovem a6@(-%d,a0:l),#0x%x\015",		\
@@ -455,7 +484,7 @@
 	  putc (')', FILE);						\
 	  break; }							\
       if (breg != 0 && ireg == 0 && GET_CODE (addr) == LABEL_REF)	\
-        { fprintf (FILE, "pc@(L%d-LI%d-2:b,%s:l",			\
+        { fprintf (FILE, "L%d-LI%d-2(pc,%s.l",			\
 		   CODE_LABEL_NUMBER (XEXP (addr, 0)),			\
 		   CODE_LABEL_NUMBER (XEXP (addr, 0)),			\
 		   reg_name[REGNO (breg)]);				\
@@ -483,7 +512,7 @@
 					\
 	}								\
       else if (reg1 != 0 && GET_CODE (addr) == LABEL_REF)		\
-	{ fprintf (FILE, "L%d-LI%d(%%pc,%s.w)",			\
+	{ fprintf (FILE, "L%d-LI%d(pc,%s.w)",			\
 		   CODE_LABEL_NUMBER (XEXP (addr, 0)),			\
 		   CODE_LABEL_NUMBER (XEXP (addr, 0)),			\
 		   reg_name[REGNO (reg1)]);				\
@@ -512,6 +541,9 @@
 #define DBX_DEBUGGING_INFOxx
 
 
-#define bcopy(a,b,c) memcpy (b,a,c)
-#define bzero(a,b) memset (a,0,b)
-#define bcmp(a,b,c) memcmp (a,b,c)
+#define bcopy(a,b,c) memcpy ((b),(a),(c))
+#define bzero(a,b) memset ((a),0,(b))
+#define bcmp(a,b,c) memcmp ((a),(b),(c))
+
+/* Generate calls to memcpy, memcmp and memset.  */
+#define TARGET_MEM_FUNCTIONS
