@@ -516,7 +516,7 @@ output_32 (operands, insn)
       fprintf (asm_out_file, "\tset %s%d,.+2\015", "LI",
 	       CODE_LABEL_NUMBER (XEXP (labelref, 0)));
 #else /* not SGS */
-      fprintf (asm_out_file, "\t.set %s%d,.+2\015", "LI",
+      fprintf (asm_out_file, "%s%d\tequ *+2\015", "LI",
 	       CODE_LABEL_NUMBER (XEXP (labelref, 0)));
 #endif /* not SGS */
 #else /* SGS_3B1 or not MOTOROLA */
@@ -1066,7 +1066,7 @@ output_78 (operands, insn)
       if (GET_CODE (operands[2]) == REG)
 	return "lea (%1,%2.l),%0";
       else
-	return "lea (%c2,%1),%0";
+	return "lea %c2(%1),%0";
 #else /* not MOTOROLA (MIT syntax) */
       if (GET_CODE (operands[2]) == REG)
 	return "lea %1@(0,%2:l),%0";
@@ -2612,7 +2612,7 @@ output_238 (operands, insn)
 #endif
 #else /* not SGS */
 #ifdef MOTOROLA
-  return "jmp (2,pc,%0.w)";
+  return "jmp 2(pc,%0.w)";
 #else
   return "jmp pc@(2,%0:w)";
 #endif
