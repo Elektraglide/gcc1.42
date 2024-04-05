@@ -2684,14 +2684,14 @@ output_241 (operands, insn)
 #ifdef MOTOROLA
 #ifndef NO_ADDSUB_Q
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tjbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "sub.l %#1,%0\015\tjbcc %l1";
+    return "sub.l %#1,%0\015\tbcc %l1";
 #else
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsubq.l %#1,%0\015\tjbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "subq.l %#1,%0\015\tjbcc %l1";
+    return "sub.l %#1,%0\015\tbcc %l1";
 #endif /* not NO_ADDSUB_Q */
 #ifdef HPUX_ASM
 #ifndef NO_ADDSUB_Q
@@ -2700,7 +2700,7 @@ output_241 (operands, insn)
   return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
 #endif
 #else
-  return "subq.l %#1,%0\015\tcmp.l %#-1,%0\015\tjbne %l1";
+  return "sub.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
 #endif
 #else
   if (DATA_REG_P (operands[0]))
@@ -2723,14 +2723,14 @@ output_242 (operands, insn)
 #ifdef MOTOROLA
 #ifndef NO_ADDSUB_Q
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tjbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "sub.l %#1,%0\015\tjbcc %l1";
+    return "sub.l %#1,%0\015\tbcc %l1";
 #else
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsubq.l %#1,%0\015\tjbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "subq.l %#1,%0\015\tjbcc %l1";
+    return "sub.l %#1,%0\015\tbcc %l1";
 #endif
 #ifdef HPUX_ASM
 #ifndef NO_ADDSUB_Q
@@ -2739,7 +2739,7 @@ output_242 (operands, insn)
   return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
 #endif
 #else
-  return "subq.l %#1,%0\015\tcmp.l %#-1,%0\015\tjbne %l1";
+  return "sub.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
 #endif
 #else
   if (DATA_REG_P (operands[0]))
