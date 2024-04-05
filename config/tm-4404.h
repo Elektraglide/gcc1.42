@@ -18,6 +18,9 @@
   0, 0, 0, 0, 0, 0, 0, 0, }
 
 /* AB: Uniflex asm knows about and uses quick variants, but does not accept them */
+
+#define NO_ADDSUB_Q
+
 #undef HAVE_addqi3
 #define HAVE_addqi3 (0)
 
@@ -175,7 +178,8 @@
 #define ASM_OUTPUT_LOCAL(FILE, NAME, SIZE, ROUNDED)  \
 (  fputs ("\tbss\015", (FILE)),			\
   assemble_name ((FILE), (NAME)),		\
-  fprintf ((FILE), "\trab %d\015", (ROUNDED)))
+  fprintf ((FILE), "\trab %d\015", (ROUNDED))), \
+  fputs ("\ttext\015", (FILE))
 
 #undef ASM_OUTPUT_ADDR_DIFF_ELT
 #define ASM_OUTPUT_ADDR_DIFF_ELT(FILE, VALUE, REL)  \
