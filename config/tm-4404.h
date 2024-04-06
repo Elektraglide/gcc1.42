@@ -251,11 +251,11 @@
   mask = 0;							\
   for (regno = 0; regno < 16; regno++)				\
     if (regs_ever_live[regno] && ! call_used_regs[regno])	\
-       mask |= 1 << (15 - regno);				\
+       mask |= 1 << (regno);				\
   if (frame_pointer_needed)					\
-    mask &= ~ (1 << (15-FRAME_POINTER_REGNUM));			\
+    mask &= ~ (1 << (FRAME_POINTER_REGNUM));			\
   if (exact_log2 (mask) >= 0)					\
-    fprintf (FILE, "\tmove.l %s,-(sp)\015", reg_names[15 - exact_log2 (mask)]);  \
+    fprintf (FILE, "\tmove.l %s,-(sp)\015", reg_names[exact_log2 (mask)]);  \
   else if (mask) fprintf (FILE, "\tmovem.l #$%x,-(sp)\015",mask);}
 
 #undef FUNCTION_EPILOGUE
@@ -292,7 +292,7 @@
       fsize = 0, big = 1; }					\
   if (exact_log2 (mask) >= 0) {					\
     if (big)							\
-      fprintf (FILE, "\tmovel a6@(-%d,a0:l),%s\015",		\
+      fprintf (FILE, "\tmove.l -%d(a6,a0.l),%s\015",		\
 	       offset + fsize, reg_names[exact_log2 (mask)]);	\
     else if (! frame_pointer_needed)				\
       fprintf (FILE, "\tmove.l (sp)+,%s\015",			\
