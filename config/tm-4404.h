@@ -18,6 +18,7 @@
   0, 0, 0, 0, 0, 0, 0, 0, }
 
 /* AB: Uniflex asm knows about and uses quick variants, but does not accept them */
+#define TSC_ASM
 
 #define NO_ADDSUB_Q
 
@@ -68,7 +69,8 @@
 
 #define LINK_SPEC "+b=1M"
 
-#define LIB_SPEC "+l=clibs +l=cmathlib"
+/* native cc adds these last options..  undocumented */
+#define LIB_SPEC "+il=clibs +l=cmathlib +Y +W"	
 
 /* Names to predefine in the preprocessor for this target machine.  */
 
@@ -111,12 +113,15 @@
 
 #undef ASM_OUTPUT_DOUBLE
 #define ASM_OUTPUT_DOUBLE(FILE,VALUE)  \
-  fprintf (FILE, "\tds.l $%8.8x,$0\015", (VALUE))
+do { union { double d; long l[2]; } tem;		\
+     tem.d = (VALUE);					\
+     fprintf(FILE, "\tdc.l $%8.8X,$%8.8X\015", tem.l[0], tem.l[1]); \
+   } while (0)
 
 /* This is how to output an assembler line defining a `float' constant.  */
 #undef ASM_OUTPUT_FLOAT
 #define ASM_OUTPUT_FLOAT(FILE,VALUE)  \
-  fprintf (FILE, "\tds.l $%8.8x\015", (VALUE))
+  fprintf (FILE, "\tdc.l $%8.8X\015", (VALUE))
 
 /* Output a float value (represented as a C double) as an immediate operand.
    This macro is a 68k-specific macro.  */
@@ -154,7 +159,7 @@
 
 #undef ASM_OUTPUT_BYTE
 #define ASM_OUTPUT_BYTE(FILE,VALUE)  \
-  fprintf (FILE, "\tfcb 0x%x\015", (VALUE))
+  fprintf (FILE, "\tfcb 0x%X\015", (VALUE))
 
 #undef ASM_FORMAT_PRIVATE_NAME
 #define ASM_FORMAT_PRIVATE_NAME(OUTPUT, NAME, LABELNO)	\
@@ -209,7 +214,7 @@
         putc (c, file);					\
       else						\
         {						\
-          fprintf (file, "\",$%2.2x,\"", c);			\
+          fprintf (file, "\",$%2.2X,\"", c);			\
           if (i < size - 1 				\
               && p[i + 1] >= '0' && p[i + 1] <= '9')	\
           fprintf (file, "\"\015\tfcc \"");		\
@@ -530,6 +535,7 @@
         output_addr_const (FILE, addr);					\
     }}
 
+#define ASM_RETURN_CASE_JUMP return "jmp 2(pc,%0.w)"
 
 /* Alignment of field after `int : 0' in a structure.  */
 

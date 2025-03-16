@@ -1,0 +1,22 @@
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genflags.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config gencodes.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genconfig.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genemit.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genpeep.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genrecog.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genextract.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genoutput.c
+
+
+./genflags md > insn-flags.h
+./gencodes md > insn-codes.h
+./genconfig md > insn-config.h
+./genemit md > insn-emit.c
+./genpeep md > insn-peep.c
+./genrecog md > insn-recog.c
+./genextract md > insn-extract.c
+./genoutput md > insn-output.c
+
+echo \\n to \\015 for Uniflex..
+sed "s/\\\n/\\\015/g" insn-output.c | sed -E "s/([ t\"])jb([a-z])/\1b\2/g"  >tmp-output.c   
+mv tmp-output.c insn-output.c
