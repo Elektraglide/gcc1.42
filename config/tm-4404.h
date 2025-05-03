@@ -70,11 +70,11 @@
 #define LINK_SPEC "+b=1M"
 
 /* native cc adds these last options..  undocumented */
-#define LIB_SPEC "+il=clibs +l=cmathlib +Y +W"	
+#define LIB_SPEC "+c=C +il=clibs +l=cmathlib +Y +W"
 
 /* Names to predefine in the preprocessor for this target machine.  */
 
-#define CPP_PREDEFINES "-Dtek -Dunix"
+#define CPP_PREDEFINES "-Dmc68010 -Dtek -Dunix"
 
 /* Uniflex uses \015 */
 #undef TARGET_NEWLINE
@@ -121,7 +121,7 @@ do { union { double d; long l[2]; } tem;		\
 /* This is how to output an assembler line defining a `float' constant.  */
 #undef ASM_OUTPUT_FLOAT
 #define ASM_OUTPUT_FLOAT(FILE,VALUE)  \
-  fprintf (FILE, "\tdc.l $%8.8X\015", (VALUE))
+  fprintf (FILE, "\tdc.l    $%8.8X\015", *(unsigned long *)&(VALUE))
 
 /* Output a float value (represented as a C double) as an immediate operand.
    This macro is a 68k-specific macro.  */
@@ -232,7 +232,14 @@ do { union { double d; long l[2]; } tem;		\
       fprintf ((FILE), ".w"); }				\
 }
 
-  
+#undef PRINT_OPERAND_PRINT_FLOAT
+#define PRINT_OPERAND_PRINT_FLOAT(CODE, FILE)   \
+{ if (CODE == 'f')							\
+    ASM_OUTPUT_FLOAT_OPERAND (FILE, u1.f);				\
+  else									\
+    fprintf (FILE, "#%d", u1.i); }  /* AB: Uniflex asm rejects hex constants */
+
+
 #undef FUNCTION_PROLOGUE
 #define FUNCTION_PROLOGUE(FILE, SIZE)     \
 { register int regno;						\
