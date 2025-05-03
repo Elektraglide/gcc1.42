@@ -20,6 +20,8 @@
 /* AB: Uniflex asm knows about and uses quick variants, but does not accept them */
 #define TSC_ASM
 
+#define GNULIB_NEEDS_DOUBLE (1)
+
 #define NO_ADDSUB_Q
 
 #undef HAVE_addqi3
