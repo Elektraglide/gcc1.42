@@ -315,7 +315,7 @@ struct compiler compilers[] =
 
 /* Here is the spec for running the linker, after compiling all files.  */
 char *link_spec = "%{!c:%{!M*:%{!E:%{!S:load %{o*}%{!o*:+o=%b} %l\
- %{A} %{d} %{e*} %{N} %{n} %{r} %{s} %{!nostdlib:%G gnulib%s %L %{L*} %{!A:%E}} %{S} %{T*} %{t} %{u*} %{X} %{x} %{z}\
+ %{A} %{d} %{e*} %{N} %{n} %{r} %{s} %{!nostdlib:%G %s %L %{L*} %{!A:%E}} %{S} %{T*} %{t} %{u*} %{X} %{x} %{z}\
  %{y*} %{!A:%{!nostdlib:%S}} %o\n }}}}";
 
 /* Accumulate a command (program name and args), and run it.  */

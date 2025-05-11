@@ -20,7 +20,27 @@
 /* AB: Uniflex asm knows about and uses quick variants, but does not accept them */
 #define TSC_ASM
 
-#define GNULIB_NEEDS_DOUBLE (1)
+/* Uniflex returns pointer to double in A0! */
+/* cpp breaks when parsing this asm() so implement elsewhere */
+#if 0
+double uniflex_atof(__arg)
+char *__arg;
+{
+	union {double d; long l[2]; } __value;
+	
+	asm("move.l %2,-(sp)\n\tjsr _atof\n\tmove.l (a0),%0\n\tmove.l 4(a0),%1 " : "=r" (__value.l[0]), "=r" (__value.l[1]) : "r" (__arg));
+	return __value.d;
+}
+
+#define UNIFLEX_ATOF(x) \
+({ union {double d; long l[2]; } __value; char * __arg = (x); \
+   asm("move.l %2,-(sp)\n\tjsr _atof\n\tmove.l (a0),%0\n\tmove.l 4(a0),%1" : "=r" (__value.l[0]), "=r" (__value.l[1]) : "r" (__arg)); \
+   __value.d; })
+#endif
+
+
+#define REAL_VALUE_ATOF(x) uniflex_atof(x)
+extern double uniflex_atof();
 
 #define NO_ADDSUB_Q
 
@@ -72,7 +92,7 @@
 #define LINK_SPEC "+b=1M"
 
 /* native cc adds these last options..  undocumented */
-#define LIB_SPEC "+c=C +il=clibs +l=cmathlib +Y +W"
+#define LIB_SPEC "+c=C +il=clibs +l=cmathlib +l=gnulib +Y +W"
 
 /* Names to predefine in the preprocessor for this target machine.  */
 
@@ -123,8 +143,11 @@ do { union { double d; long l[2]; } tem;		\
 /* This is how to output an assembler line defining a `float' constant.  */
 #undef ASM_OUTPUT_FLOAT
 #define ASM_OUTPUT_FLOAT(FILE,VALUE)  \
-  fprintf (FILE, "\tdc.l    $%8.8X\015", *(unsigned long *)&(VALUE))
-
+do { union { float f; long l;} tem;			\
+     tem.f = (VALUE);					\
+     fprintf (FILE, "\tdc.l $%8.8x\015", tem.l);	\
+   } while (0)
+   
 /* Output a float value (represented as a C double) as an immediate operand.
    This macro is a 68k-specific macro.  */
 #undef ASM_OUTPUT_FLOAT_OPERAND
@@ -239,7 +262,7 @@ do { union { double d; long l[2]; } tem;		\
 { if (CODE == 'f')							\
     ASM_OUTPUT_FLOAT_OPERAND (FILE, u1.f);				\
   else									\
-    fprintf (FILE, "#%d", u1.i); }  /* AB: Uniflex asm rejects hex constants */
+    fprintf (FILE, "#$%8.8x", u1.i); }  /* AB: Uniflex asm rejects 0x constants */
 
 
 #undef FUNCTION_PROLOGUE
