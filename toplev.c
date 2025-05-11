@@ -1809,9 +1809,13 @@ main (argc, argv, envp)
   }
 #endif /* RLIMIT_STACK */
 
-/* AB Uniflex 
+/* AB Uniflex does not have this
   signal (SIGFPE, float_signal);
 */
+
+	/* AB Uniflex needs floating point crt */
+	pffinit();
+
   signal (SIGPIPE, pipe_closed);
 
   /* Initialize whether `char' is signed.  */

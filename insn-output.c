@@ -399,7 +399,11 @@ output_30 (operands, insn)
   /* moveq is faster on the 68000.  */
   if (DATA_REG_P (operands[0]) && !TARGET_68020)
 #ifdef MOTOROLA
+#ifndef TSC_ASM
+    return "moveq%.l %#0,%0";
+#else
     return "move%.l %#0,%0";
+#endif
 #else
     return "moveq %#0,%0";
 #endif
@@ -434,7 +438,12 @@ output_31 (operands, insn)
 	       && INTVAL (operands[1]) >= -128)
         {
 #ifdef MOTOROLA
+#ifndef TSC_ASM
+          return "moveq%.l %1,%0";
+#else
           return "move%.l %1,%0";
+#endif
+
 #else
 	  return "moveq %1,%0";
 #endif
@@ -483,7 +492,12 @@ output_32 (operands, insn)
 	       && INTVAL (operands[1]) >= -128)
         {
 #ifdef MOTOROLA
+#ifndef TSC_ASM
+          return "moveq%.l %1,%0";
+#else
           return "move%.l %1,%0";
+#endif
+
 #else
 	  return "moveq %1,%0";
 #endif
@@ -515,7 +529,7 @@ output_32 (operands, insn)
 #ifdef SGS
       fprintf (asm_out_file, "\tset %s%d,.+2\015", "LI",
 	       CODE_LABEL_NUMBER (XEXP (labelref, 0)));
-#else /* not SGS */
+#else /* not SGS (TSC_ASM) */
       fprintf (asm_out_file, "%s%d\tequ *+2\015", "LI",
 	       CODE_LABEL_NUMBER (XEXP (labelref, 0)));
 #endif /* not SGS */
@@ -572,7 +586,11 @@ output_34 (operands, insn)
       xoperands[3] = stack_pointer_rtx;
       /* Just pushing a byte puts it in the high byte of the halfword.  */
       /* We must put it in the low half, the second byte.  */
+#ifndef NO_ADDSUB_Q
+      output_asm_insn ("subq%.w %#2,%3\015\tmove%.b %1,%2", xoperands);
+#else
       output_asm_insn ("sub%.w %#2,%3\015\tmove%.b %1,%2", xoperands);
+#endif
       return "move%.w %+,%0";
     }
   if (ADDRESS_REG_P (operands[1]) && GET_CODE (operands[0]) == MEM)
@@ -583,7 +601,12 @@ output_34 (operands, insn)
         = gen_rtx (MEM, QImode,
 		   gen_rtx (PLUS, VOIDmode, stack_pointer_rtx, const1_rtx));
       xoperands[3] = stack_pointer_rtx;
+#ifndef NO_ADDSUB_Q
+      output_asm_insn ("move%.w %1,%-\015\tmove%.b %2,%0\015\taddq%.w %#2,%3", xoperands);
+#else
       output_asm_insn ("move%.w %1,%-\015\tmove%.b %2,%0\015\tadd%.w %#2,%3", xoperands);
+#endif
+
       return "";
     }
   /* clr and st insns on 68000 read before writing.
@@ -1081,16 +1104,16 @@ output_78 (operands, insn)
       if (INTVAL (operands[2]) > 0
 	  && INTVAL (operands[2]) <= 8)
 	return (ADDRESS_REG_P (operands[0])
-		? "add%.w %2,%0"
-		: "add%.l %2,%0");
+		? "addq%.w %2,%0"
+		: "addq%.l %2,%0");
       if (INTVAL (operands[2]) < 0
 	  && INTVAL (operands[2]) >= -8)
         {
 	  operands[2] = gen_rtx (CONST_INT, VOIDmode,
 			         - INTVAL (operands[2]));
 	  return (ADDRESS_REG_P (operands[0])
-		  ? "sub%.w %2,%0"
-		  : "sub%.l %2,%0");
+		  ? "subq%.w %2,%0"
+		  : "subq%.l %2,%0");
 	}
 #endif
       if (ADDRESS_REG_P (operands[0])
@@ -1114,7 +1137,7 @@ output_80 (operands, insn)
     {
       if (INTVAL (operands[2]) > 0
 	  && INTVAL (operands[2]) <= 8)
-	return "add%.w %2,%0";
+	return "addq%.w %2,%0";
     }
   if (GET_CODE (operands[2]) == CONST_INT)
     {
@@ -1123,7 +1146,7 @@ output_80 (operands, insn)
 	{
 	  operands[2] = gen_rtx (CONST_INT, VOIDmode,
 			         - INTVAL (operands[2]));
-	  return "sub%.w %2,%0";
+	  return "subq%.w %2,%0";
 	}
     }
 #endif
@@ -1143,14 +1166,14 @@ output_82 (operands, insn)
     {
       if (INTVAL (operands[2]) > 0
 	  && INTVAL (operands[2]) <= 8)
-	return "add%.b %2,%0";
+	return "addq%.b %2,%0";
     }
   if (GET_CODE (operands[2]) == CONST_INT)
     {
       if (INTVAL (operands[2]) < 0 && INTVAL (operands[2]) >= -8)
        {
 	 operands[2] = gen_rtx (CONST_INT, VOIDmode, - INTVAL (operands[2]));
-	 return "sub%.b %2,%0";
+	 return "subq%.b %2,%0";
        }
     }
 #endif
@@ -1234,7 +1257,7 @@ output_90 (operands, insn)
 	    {
 	      if (INTVAL (operands[1]) > 0
 		  && INTVAL (operands[1]) <= 8)
-		return "sub%.l %1,%0\015\tneg%.l %0";
+		return "subq%.l %1,%0\015\tneg%.l %0";
 	    }
 #endif
 	  return "sub%.l %1,%0\015\tneg%.l %0";
@@ -1259,7 +1282,7 @@ output_90 (operands, insn)
 #ifndef NO_ADDSUB_Q
       if (INTVAL (operands[2]) > 0
 	  && INTVAL (operands[2]) <= 8)
-	return "sub%.l %2,%0";
+	return "subq%.l %2,%0";
 #endif
       if (ADDRESS_REG_P (operands[0])
 	  && INTVAL (operands[2]) >= -0x8000
@@ -2318,7 +2341,7 @@ output_215 (operands, insn)
 
 {
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbeq %l0", "fbeq %l0", "jbeq %l0");
+  OUTPUT_JUMP ("beq %l0", "fbeq %l0", "beq %l0");
 #else
   OUTPUT_JUMP ("jeq %l0", "fjeq %l0", "jeq %l0");
 #endif
@@ -2333,7 +2356,7 @@ output_216 (operands, insn)
 
 {
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbne %l0", "fbne %l0", "jbne %l0");
+  OUTPUT_JUMP ("bne %l0", "fbne %l0", "bne %l0");
 #else
   OUTPUT_JUMP ("jne %l0", "fjne %l0", "jne %l0");
 #endif
@@ -2347,7 +2370,7 @@ output_217 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbgt %l0", "fbgt %l0", 0);
+  OUTPUT_JUMP ("bgt %l0", "fbgt %l0", 0);
 #else
   OUTPUT_JUMP ("jgt %l0", "fjgt %l0", 0);
 #endif
@@ -2361,7 +2384,7 @@ output_218 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbhi %l0";
+  return "bhi %l0";
 #else
   return "jhi %l0";
 #endif
@@ -2375,7 +2398,7 @@ output_219 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jblt %l0", "fblt %l0", "jbmi %l0");
+  OUTPUT_JUMP ("blt %l0", "fblt %l0", "bmi %l0");
 #else
   OUTPUT_JUMP ("jlt %l0", "fjlt %l0", "jmi %l0");
 #endif
@@ -2389,7 +2412,7 @@ output_220 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbcs %l0";
+  return "bcs %l0";
 #else
   return "jcs %l0";
 #endif
@@ -2403,7 +2426,7 @@ output_221 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbge %l0", "fbge %l0", "jbpl %l0");
+  OUTPUT_JUMP ("bge %l0", "fbge %l0", "bpl %l0");
 #else
   OUTPUT_JUMP ("jge %l0", "fjge %l0", "jpl %l0");
 #endif
@@ -2417,7 +2440,7 @@ output_222 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbcc %l0";
+  return "bcc %l0";
 #else
   return "jcc %l0";
 #endif
@@ -2431,7 +2454,7 @@ output_223 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jble %l0", "fble %l0", 0);
+  OUTPUT_JUMP ("ble %l0", "fble %l0", 0);
 #else
   OUTPUT_JUMP ("jle %l0", "fjle %l0", 0);
 #endif
@@ -2445,7 +2468,7 @@ output_224 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbls %l0";
+  return "bls %l0";
 #else
   return "jls %l0";
 #endif
@@ -2460,7 +2483,7 @@ output_225 (operands, insn)
 
 {
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbne %l0", "fbne %l0", "jbne %l0");
+  OUTPUT_JUMP ("bne %l0", "fbne %l0", "bne %l0");
 #else
   OUTPUT_JUMP ("jne %l0", "fjne %l0", "jne %l0");
 #endif
@@ -2475,7 +2498,7 @@ output_226 (operands, insn)
 
 {
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbeq %l0", "fbeq %l0", "jbeq %l0");
+  OUTPUT_JUMP ("beq %l0", "fbeq %l0", "beq %l0");
 #else
   OUTPUT_JUMP ("jeq %l0", "fjeq %l0", "jeq %l0");
 #endif
@@ -2489,7 +2512,7 @@ output_227 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jble %l0", "fbngt %l0", 0);
+  OUTPUT_JUMP ("ble %l0", "fbngt %l0", 0);
 #else
   OUTPUT_JUMP ("jle %l0", "fjngt %l0", 0);
 #endif
@@ -2503,7 +2526,7 @@ output_228 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbls %l0";
+  return "bls %l0";
 #else
   return "jls %l0";
 #endif
@@ -2517,7 +2540,7 @@ output_229 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbge %l0", "fbnlt %l0", "jbpl %l0");
+  OUTPUT_JUMP ("bge %l0", "fbnlt %l0", "bpl %l0");
 #else
   OUTPUT_JUMP ("jge %l0", "fjnlt %l0", "jpl %l0");
 #endif
@@ -2531,7 +2554,7 @@ output_230 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbcc %l0";
+  return "bcc %l0";
 #else
   return "jcc %l0";
 #endif
@@ -2545,7 +2568,7 @@ output_231 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jblt %l0", "fbnge %l0", "jbmi %l0");
+  OUTPUT_JUMP ("blt %l0", "fbnge %l0", "bmi %l0");
 #else
   OUTPUT_JUMP ("jlt %l0", "fjnge %l0", "jmi %l0");
 #endif
@@ -2559,7 +2582,7 @@ output_232 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbcs %l0";
+  return "bcs %l0";
 #else
   return "jcs %l0";
 #endif
@@ -2573,7 +2596,7 @@ output_233 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  OUTPUT_JUMP ("jbgt %l0", "fbnle %l0", 0);
+  OUTPUT_JUMP ("bgt %l0", "fbnle %l0", 0);
 #else
   OUTPUT_JUMP ("jgt %l0", "fjnle %l0", 0);
 #endif
@@ -2587,7 +2610,7 @@ output_234 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbhi %l0";
+  return "bhi %l0";
 #else
   return "jhi %l0";
 #endif
@@ -2612,7 +2635,7 @@ output_238 (operands, insn)
 #endif
 #else /* not SGS */
 #ifdef MOTOROLA
-  return "jmp 2(pc,%0.w)";
+  return "jmp (2,pc,%0.w)";
 #else
   return "jmp pc@(2,%0:w)";
 #endif
@@ -2628,7 +2651,7 @@ output_239 (operands, insn)
 {
 
 #ifdef MOTOROLA
-  return "jbra %l0";
+  return "bra %l0";
 #else
   return "jra %l0";
 #endif
@@ -2649,9 +2672,9 @@ output_240 (operands, insn)
     {
 #ifdef MOTOROLA
 #ifdef NO_ADDSUB_Q
-      return "sub%.w %#1,%0\015\tjbcc %l1";
+      return "sub%.w %#1,%0\015\tbcc %l1";
 #else
-      return "sub%.w %#1,%0\015\tjbcc %l1";
+      return "subq%.w %#1,%0\015\tbcc %l1";
 #endif
 #else /* not MOTOROLA */
       return "subqw %#1,%0\015\tjcc %l1";
@@ -2660,12 +2683,16 @@ output_240 (operands, insn)
 #ifdef MOTOROLA
 #ifdef HPUX_ASM
 #ifndef NO_ADDSUB_Q
-  return "sub%.w %#1,%0\015\tcmp%.w %0,%#-1\015\tjbne %l1";
+  return "subq%.w %#1,%0\015\tcmp%.w %0,%#-1\015\tbne %l1";
 #else
-  return "sub%.w %#1,%0\015\tcmp%.w %0,%#-1\015\tjbne %l1";
+  return "sub%.w %#1,%0\015\tcmp%.w %0,%#-1\015\tbne %l1";
 #endif
 #else /* not HPUX_ASM */
-  return "sub%.w %#1,%0\015\tcmp%.w %#-1,%0\015\tjbne %l1";
+#ifndef NO_ADDSUB_Q
+  return "subq%.w %#1,%0\015\tcmp%.w %#-1,%0\015\tbne %l1";
+#else
+  return "sub%.w %#1,%0\015\tcmp%.w %#-1,%0\015\tbne %l1";
+#endif
 #endif
 #else /* not MOTOROLA */
   return "subqw %#1,%0\015\tcmpw %#-1,%0\015\tjne %l1";
@@ -2682,25 +2709,25 @@ output_241 (operands, insn)
 {
   CC_STATUS_INIT;
 #ifdef MOTOROLA
-#ifndef NO_ADDSUB_Q
+#ifdef NO_ADDSUB_Q
   if (DATA_REG_P (operands[0]))
     return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
     return "sub.l %#1,%0\015\tbcc %l1";
 #else
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsubq.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "sub.l %#1,%0\015\tbcc %l1";
+    return "subq.l %#1,%0\015\tbcc %l1";
 #endif /* not NO_ADDSUB_Q */
 #ifdef HPUX_ASM
-#ifndef NO_ADDSUB_Q
-  return "sub.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
+#ifdef NO_ADDSUB_Q
+  return "sub.l %#1,%0\015\tcmp.l %0,%#-1\015\tbne %l1";
 #else
-  return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
+  return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tbne %l1";
 #endif
 #else
-  return "sub.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
+  return "subq.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
 #endif
 #else
   if (DATA_REG_P (operands[0]))
@@ -2728,18 +2755,18 @@ output_242 (operands, insn)
     return "sub.l %#1,%0\015\tbcc %l1";
 #else
   if (DATA_REG_P (operands[0]))
-    return "dbra %0,%l1\015\tclr.w %0\015\tsub.l %#1,%0\015\tbcc %l1";
+    return "dbra %0,%l1\015\tclr.w %0\015\tsubq.l %#1,%0\015\tbcc %l1";
   if (GET_CODE (operands[0]) == MEM)
-    return "sub.l %#1,%0\015\tbcc %l1";
+    return "subq.l %#1,%0\015\tbcc %l1";
 #endif
 #ifdef HPUX_ASM
 #ifndef NO_ADDSUB_Q
-  return "sub.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
+  return "sub.l %#1,%0\015\tcmp.l %0,%#-1\015\tbne %l1";
 #else
-  return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tjbne %l1";
+  return "subq.l %#1,%0\015\tcmp.l %0,%#-1\015\tbne %l1";
 #endif
 #else
-  return "sub.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
+  return "subq.l %#1,%0\015\tcmp.l %#-1,%0\015\tbne %l1";
 #endif
 #else
   if (DATA_REG_P (operands[0]))
@@ -2760,7 +2787,7 @@ output_243 (operands, insn)
 #ifdef MOTOROLA
   return "jsr %0";
 #else
-  return "jbsr %0";
+  return "bsr %0";
 #endif
 
 }
@@ -2774,7 +2801,7 @@ output_244 (operands, insn)
 #ifdef MOTOROLA
   return "jsr %1";
 #else
-  return "jbsr %1";
+  return "bsr %1";
 #endif
 
 }
