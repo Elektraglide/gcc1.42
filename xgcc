@@ -1,6 +1,6 @@
-rm ${1%.*}.o
+rm -f ${1%.*}.o
 
-/opt/homebrew/Cellar/gcc-cross-m68k@13/13.1.0/bin/m68k-elf-gcc -fcall-used-d2 -fcall-used-a2 -nostdinc -I ~/projects/tek4404/development/mirror2.0_net2.1/lib/include  -w  -U__GNUC__ -U__STDC__ -std=c89 -m68010  -fleading-underscore -c -O $*
+/opt/homebrew/Cellar/gcc-cross-m68k@13/13.1.0/bin/m68k-elf-gcc -fcall-used-d2 -fcall-used-a2 -nostdinc -I ~/projects/tek4404/development/mirror2.0_net2.1/lib/include  -w  -U__GNUC__ -U__STDC__ -std=c89 -m68010  -fleading-underscore -c -Iconfig  -O1 $*
 
 ~/projects/tek4404/development/UniflexEmu/elf32touniflex ${1%.*}.o 
 

@@ -1,12 +1,20 @@
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genflags.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config gencodes.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genconfig.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genemit.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genpeep.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genrecog.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genextract.c
-cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genoutput.c
+echo Building parsers for Machine Description
 
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config version.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config obstack.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config alloca.c
+cc -c -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config rtl.c
+
+cc -o genflags -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genflags.c rtl.o obstack.o alloca.o
+cc -o gencodes  -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config gencodes.c rtl.o obstack.o alloca.o
+cc -o genconfig -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genconfig.c rtl.o obstack.o alloca.o
+cc -o genemit -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genemit.c rtl.o obstack.o alloca.o
+cc -o genpeep -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genpeep.c rtl.o obstack.o alloca.o
+cc -o genrecog -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genrecog.c rtl.o obstack.o alloca.o
+cc -o genextract -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genextract.c rtl.o obstack.o alloca.o
+cc -o genoutput -Wno-deprecated-non-prototype -Wno-implicit-function-declaration -std=c89 -g   -I. -I. -I./config genoutput.c rtl.o obstack.o alloca.o
+
+echo Building header files
 
 ./genflags md > insn-flags.h
 ./gencodes md > insn-codes.h

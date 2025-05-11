@@ -1,0 +1,73 @@
+
+
+
+all:
+	./gen.build
+
+	./xgcc gcc.c -DSTANDARD_STARTFILE_PREFIX=\"/lib/\" -DSTANDARD_EXEC_PREFIX=\"/bin/cpasses\"
+	./xgcc version.c
+	./xgcc obstack.c
+	./xgcc alloca.c
+	./xgcc toplev.c
+	./xgcc c-parse.tab.c -O0
+	./xgcc tree.c
+	./xgcc print-tree.c
+	./xgcc c-decl.c
+	./xgcc c-typeck.c
+	./xgcc c-convert.c
+	./xgcc stor-layout.c
+	./xgcc fold-const.c
+	./xgcc rtl.c
+	./xgcc rtlanal.c
+	./xgcc expr.c
+	./xgcc stmt.c
+	./xgcc expmed.c
+	./xgcc explow.c
+	./xgcc optabs.c
+	./xgcc varasm.c
+	./xgcc symout.c
+	./xgcc dbxout.c
+	./xgcc sdbout.c
+	./xgcc emit-rtl.c
+	./xgcc insn-emit.c
+	./xgcc integrate.c
+	./xgcc jump.c
+	./xgcc cse.c
+	./xgcc loop.c
+	./xgcc flow.c
+	./xgcc stupid.c
+	./xgcc combine.c
+	./xgcc regclass.c
+	./xgcc local-alloc.c
+	./xgcc global-alloc.c
+	./xgcc reload.c
+	./xgcc reload1.c
+	./xgcc caller-save.c
+	./xgcc insn-peep.c
+	./xgcc final.c
+	./xgcc recog.c
+	./xgcc insn-recog.c
+	./xgcc insn-extract.c
+	./xgcc insn-output.c
+	./xgcc cccp.c -O0 -DGCC_INCLUDE_DIR=\"/lib/gcc-include\"
+	./xgcc cexp.c
+
+	echo "concating .r files.."
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.1.r c-parse.tab.o.r c-decl.o.r c-typeck.o.r c-convert.o.r toplev.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.2.r version.o.r tree.o.r print-tree.o.r stor-layout.o.r fold-const.o.r rtl.o.r rtlanal.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.3.r expr.o.r stmt.o.r expmed.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.4.r explow.o.r optabs.o.r varasm.o.r symout.o.r dbxout.o.r sdbout.o.r emit-rtl.o.r insn-emit.o.r integrate.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.5.r jump.o.r cse.o.r loop.o.r flow.o.r stupid.o.r combine.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.6.r regclass.o.r local-alloc.o.r global-alloc.o.r reload.o.r reload1.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.7.r caller-save.o.r insn-peep.o.r final.o.r recog.o.r insn-recog.o.r 
+
+	~/projects/tek4404/development/UniflexEmu/rcat  -c -o cc1.8.r insn-extract.o.r insn-output.o.r obstack.o.r alloca.o.r
+
+
+
